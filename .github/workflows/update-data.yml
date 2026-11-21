@@ -1,0 +1,40 @@
+name: Update economic data
+
+on:
+  schedule:
+    # 06:00 UTC on the 2nd of every month (after most monthly CPI releases)
+    - cron: "0 6 2 * *"
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+jobs:
+  update-data:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install test dependencies
+        run: pip install -r scripts/requirements.txt
+
+      - name: Fetch latest data
+        run: python scripts/fetch_data.py
+
+      - name: Build processed metrics
+        run: python scripts/build_data.py
+
+      - name: Run tests
+        run: python -m pytest tests -v
+
+      - name: Commit updated data
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/processed
+          git diff --staged --quiet || git commit -m "Monthly economic data refresh"
+          git push

@@ -1,0 +1,4 @@
+# fetch_data.py and build_data.py use only the Python standard library
+# (urllib, json, argparse) so there is nothing to install for normal use.
+# This file exists so CI has a place to pin anything added later, e.g.:
+pytest>=8.0
