@@ -404,6 +404,238 @@ button:active, a:active { transform: scale(0.97); }
 
 .modal-card .close-btn:hover { color: var(--ink); border-color: var(--muted); }
 
+/* ---------- rankings view ---------- */
+
+.rankings-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.rankings-filterbar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 24px;
+  border-bottom: 1px solid var(--hair);
+  flex-shrink: 0;
+}
+
+.rankings-filterbar .count {
+  font-size: 10.5px;
+  color: var(--muted);
+}
+
+.rankings-kpi-row {
+  padding: 14px 24px 0;
+  display: grid;
+  grid-template-columns: 1.3fr 1fr;
+  gap: 14px;
+  flex-shrink: 0;
+}
+
+.kpi-tile-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+
+.kpi-tile {
+  border: 1px solid var(--hair);
+  border-radius: var(--radius-md);
+  padding: 10px 12px;
+}
+
+.kpi-tile .kpi-label {
+  font-size: 9.5px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.kpi-tile .kpi-value {
+  font-size: 17px;
+  margin-top: 3px;
+}
+
+.region-bar-panel {
+  border: 1px solid var(--hair);
+  border-radius: var(--radius-md);
+  padding: 10px 14px;
+}
+
+.region-bar-panel .panel-title {
+  font-size: 9.5px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 7px;
+}
+
+.region-bar-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.region-bar-row:last-child { margin-bottom: 0; }
+
+.region-bar-row .region-name {
+  width: 100px;
+  font-size: 10.5px;
+  color: var(--ink-2);
+  flex-shrink: 0;
+}
+
+.region-bar-track {
+  flex: 1;
+  height: 6px;
+  border-radius: 999px;
+  background: var(--page);
+}
+
+.region-bar-fill {
+  height: 100%;
+  border-radius: 999px;
+  background: var(--accent);
+}
+
+.region-bar-row .region-value {
+  width: 42px;
+  text-align: right;
+  font-size: 10.5px;
+}
+
+.leader-card-row {
+  padding: 14px 24px 0;
+  flex-shrink: 0;
+}
+
+.leader-card-row .panel-title {
+  font-size: 9.5px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 8px;
+}
+
+.leader-card-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+
+.leader-card {
+  border: 1px solid var(--hair);
+  border-radius: var(--radius-lg);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 108px;
+}
+
+.leader-card .region-name {
+  font-size: 10px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.leader-card .country-name {
+  font-size: 14px;
+  font-weight: 650;
+}
+
+.leader-card .country-value {
+  font-size: 24px;
+  font-weight: 700;
+  margin-top: 2px;
+}
+
+.leader-card .rank-note {
+  font-size: 10px;
+  color: var(--muted);
+}
+
+.rankings-table-wrap {
+  flex: 1;
+  padding: 12px 24px 16px;
+  overflow: auto;
+  min-height: 0;
+}
+
+.rankings-table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+.rankings-table thead {
+  position: sticky;
+  top: 0;
+  background: var(--page);
+  z-index: 1;
+}
+
+.rankings-table th {
+  text-align: left;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 600;
+  padding: 8px 10px;
+  cursor: pointer;
+  color: var(--muted);
+  white-space: nowrap;
+  border-bottom: 1px solid var(--hair);
+  user-select: none;
+}
+
+.rankings-table th:hover { color: var(--ink); }
+.rankings-table th.sorted { color: var(--ink); }
+.rankings-table th.num { text-align: right; }
+
+.rankings-table td {
+  padding: 8px 10px;
+  font-size: 12.5px;
+  border-bottom: 1px solid var(--hair);
+}
+
+.rankings-table tr.highlighted-row {
+  background: rgba(255, 106, 19, 0.08);
+}
+
+.rankings-table tr:hover {
+  background: rgba(255, 255, 255, 0.025);
+}
+
+.region-chip {
+  font-size: 10px;
+  background: var(--surface);
+  border: 1px solid var(--hair);
+  border-radius: 999px;
+  padding: 1px 6px;
+  color: var(--ink-2);
+  margin-left: 6px;
+  white-space: nowrap;
+}
+
+.severity-track {
+  width: 120px;
+  height: 6px;
+  border-radius: 999px;
+  background: var(--page);
+}
+
+.severity-fill {
+  height: 100%;
+  border-radius: 999px;
+}
+
+.sparkline-cell { width: 76px; }
+
 /* ---------- placeholder (not-yet-built views) ---------- */
 
 .placeholder-view {

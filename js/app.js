@@ -16,7 +16,11 @@
       destroy: () => global.MapView.destroy && global.MapView.destroy(),
       showSubheader: true,
     },
-    rankings: { render: renderPlaceholder("Rankings"), destroy: noop, showSubheader: false },
+    rankings: {
+      render: (el) => global.RankingsView.render(el),
+      destroy: () => global.RankingsView.destroy && global.RankingsView.destroy(),
+      showSubheader: false,
+    },
     compare: { render: renderPlaceholder("Compare"), destroy: noop, showSubheader: false },
   };
 

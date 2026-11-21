@@ -8,7 +8,7 @@ with historical trend and news.
 **Live site:** https://saurabhdolas01.github.io/World-Inflation-Tracker/
 
 <div align="center">
-  <sub>Matte black · storm grey glass · safety orange — no blue anywhere in the UI.</sub>
+  <sub>Matte black, storm grey glass, safety orange: no blue anywhere in the UI.</sub>
 </div>
 
 ---
@@ -21,23 +21,23 @@ Being built stage by stage, each one reviewed before moving to the next. See
 | Stage | View | Status |
 |---|---|---|
 | 1 | Data pipeline (World Bank + IMF) | ✅ Done |
-| 1 | Map — 3D globe, year selector, search | ✅ Done |
-| 2 | Rankings — sortable table, regional breakdown | 🔜 Next |
-| 3 | Compare — two-country side by side | ⏳ Planned |
-| 4 | Country Detail — history, other indicators, news | ⏳ Planned |
+| 1 | Map: 3D globe, year selector, search | ✅ Done |
+| 2 | Rankings: sortable table, regional breakdown | ✅ Done |
+| 3 | Compare: two-country side by side | 🔜 Next |
+| 4 | Country Detail: history, other indicators, news | ⏳ Planned |
 
 ## Features
 
-- **Map** — a rotatable, clickable 3D globe shaded by inflation level
+- **Map**: a rotatable, clickable 3D globe shaded by inflation level
   (`globe.gl`), a year dropdown, country search, and a grey-to-orange legend.
-- **Rankings** *(coming next)* — every country sorted by inflation, with a
-  world-average/highest/lowest KPI strip, a regional breakdown, and a
-  12-month trend sparkline per row.
-- **Compare** *(planned)* — exactly two countries side by side: a monthly
+- **Rankings**: every country sorted by inflation, with a world-average/
+  highest/lowest KPI strip, a regional breakdown, per-region leader cards,
+  and a trend sparkline + severity bar per row.
+- **Compare** *(coming next)*: exactly two countries side by side, a monthly
   YoY line chart plus GDP growth, unemployment, FX rate, and current account.
-- **Country Detail** *(planned)* — headline number, all-time high/low/
-  average, a scrollable 2000–2025 history chart, other indicators, and a
-  live news feed from Google News.
+- **Country Detail** *(planned)*: headline number, all-time high/low/average,
+  a scrollable 2000-2025 history chart, other indicators, and a live news
+  feed from Google News.
 
 ## Architecture
 
@@ -49,7 +49,9 @@ js/
   data.js            fetches + caches data/processed/metrics.json
   format.js          number formatting + the inflation color scale
   globe.js           globe.gl choropleth globe
-  views/map.js       Map view (more views land here in later stages)
+  views/
+    map.js           Map view
+    rankings.js       Rankings view (more views land here in later stages)
 scripts/
   fetch_data.py      pulls raw World Bank + IMF data into data/raw/
   build_data.py      processes data/raw/ into data/processed/metrics.json
@@ -57,7 +59,7 @@ scripts/
   countries.py       the curated major-economies list (for IMF monthly data)
 data/
   raw/               untouched API responses (git-ignored, regenerated each run)
-  processed/         metrics.json — what the site actually reads
+  processed/         metrics.json: what the site actually reads
 tests/               unit tests for the data pipeline
 .github/workflows/
   update-data.yml    monthly scheduled refresh, commits data/processed/
@@ -104,21 +106,21 @@ python -m pytest tests -v
 
 | Source | Used for | Refresh |
 |---|---|---|
-| [World Bank Open Data API](https://api.worldbank.org/v2/) | CPI inflation, GDP growth, unemployment, FX rate, current account — every reporting country | Monthly |
+| [World Bank Open Data API](https://api.worldbank.org/v2/) | CPI inflation, GDP growth, unemployment, FX rate, current account, for every reporting country | Monthly |
 | [IMF International Financial Statistics](https://data.imf.org/) | Monthly CPI index for major economies, converted to YoY % | Monthly |
 | [Google News RSS](https://news.google.com/rss) | Per-country headlines (Country Detail view) | Daily *(added in a later stage)* |
 
 Figures can lag the current date by a year or more for countries that report
-infrequently — the site surfaces whatever the latest available year is per
+infrequently. The site surfaces whatever the latest available year is per
 country rather than hiding gaps.
 
 ## Deployment
 
 Two scheduled/triggered GitHub Actions do all the work:
 
-- **`update-data.yml`** — runs monthly, re-fetches World Bank + IMF data,
+- **`update-data.yml`**: runs monthly, re-fetches World Bank + IMF data,
   rebuilds `data/processed/metrics.json`, and commits it if anything changed.
-- **`pages.yml`** — deploys the `main` branch to GitHub Pages on every push.
+- **`pages.yml`**: deploys the `main` branch to GitHub Pages on every push.
 
 To enable Pages on a fork: **Settings → Pages → Source: GitHub Actions**
 (the repo must be public, or you'll need GitHub Enterprise for private Pages).
