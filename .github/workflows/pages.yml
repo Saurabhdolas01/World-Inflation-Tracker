@@ -26,5 +26,10 @@ jobs:
       - uses: actions/upload-pages-artifact@v3
         with:
           path: .
+      # Guards against a GitHub-side race: deploy-pages can query for the
+      # artifact a moment before it's indexed on the Pages side, failing
+      # with "Found 0 artifact(s)" even though the upload just succeeded.
+      - name: Wait for artifact to be indexed
+        run: sleep 15
       - id: deployment
         uses: actions/deploy-pages@v4
