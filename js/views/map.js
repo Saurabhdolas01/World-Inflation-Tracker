@@ -9,19 +9,31 @@
   function render(root) {
     root.innerHTML = `
       <div class="map-main">
-        <div class="globe-panel glass">
-          <div id="globe-container"></div>
-          <div class="globe-loading" id="globe-loading">
-            <div class="spinner"></div>
-            <span>Loading globe…</span>
+        <div class="map-layout">
+          <div class="map-globe-col">
+            <div class="globe-panel glass">
+              <div id="globe-container"></div>
+              <div class="globe-loading" id="globe-loading">
+                <div class="spinner"></div>
+                <span>Loading globe…</span>
+              </div>
+            </div>
+            <div class="legend-row">
+              <span>0%</span>
+              <div class="legend-gradient"></div>
+              <span>20%+</span>
+              <span style="margin-left:12px;">No data</span>
+              <div class="legend-nodata-swatch"></div>
+            </div>
           </div>
-        </div>
-        <div class="legend-row">
-          <span>0%</span>
-          <div class="legend-gradient"></div>
-          <span>20%+</span>
-          <span style="margin-left:12px;">No data</span>
-          <div class="legend-nodata-swatch"></div>
+
+          <div class="map-side-col">
+            <div class="map-kpi-strip glass" id="map-kpi-strip"></div>
+            <div class="map-movers-panel glass">
+              <div class="panel-title">Highest inflation, selected year</div>
+              <div id="map-movers-list"></div>
+            </div>
+          </div>
         </div>
       </div>
     `;
@@ -32,6 +44,7 @@
       .then((metrics) => {
         setupYearDropdown(metrics, yearSelect);
         mountGlobe(metrics);
+        renderSidePanel(metrics);
       })
       .catch((err) => {
         console.error("[map] failed to load data:", err);
@@ -51,7 +64,69 @@
       if (globeHandle) {
         globeHandle.refreshColors(() => valueGetter(metrics));
       }
+      renderSidePanel(metrics);
     };
+  }
+
+  // Values for the selected year, per country, computed once per render so
+  // the KPI strip and movers list agree with what's actually colored on the
+  // globe (both read from the same Fmt.valueForYear fallback logic).
+  function valuesForSelectedYear(metrics) {
+    return metrics.countries
+      .map((c) => ({ country: c, value: Fmt.valueForYear(c.inflation_history, selectedYear) }))
+      .filter((r) => r.value !== null);
+  }
+
+  function renderSidePanel(metrics) {
+    const rows = valuesForSelectedYear(metrics);
+    const kpiStrip = document.getElementById("map-kpi-strip");
+    const moversList = document.getElementById("map-movers-list");
+    if (!kpiStrip || !moversList) return; // view may have been torn down mid-fetch
+
+    if (!rows.length) {
+      kpiStrip.innerHTML = `<div class="map-kpi-item"><span class="map-kpi-label">No data for ${selectedYear}</span></div>`;
+      moversList.innerHTML = "";
+      return;
+    }
+
+    const values = rows.map((r) => r.value);
+    const avg = values.reduce((a, b) => a + b, 0) / values.length;
+    const sorted = rows.slice().sort((a, b) => b.value - a.value);
+    const lowest = sorted[sorted.length - 1];
+
+    kpiStrip.innerHTML = `
+      <div class="map-kpi-item">
+        <span class="map-kpi-label">World average, ${selectedYear}</span>
+        <span class="map-kpi-value mono">${avg.toFixed(1)}%</span>
+      </div>
+      <div class="map-kpi-item">
+        <span class="map-kpi-label">Lowest</span>
+        <span class="map-kpi-value mono" style="color:var(--good);">${lowest.country.name}, ${lowest.value.toFixed(1)}%</span>
+      </div>
+      <div class="map-kpi-item">
+        <span class="map-kpi-label">Reporting countries</span>
+        <span class="map-kpi-value mono">${rows.length}</span>
+      </div>
+    `;
+
+    moversList.innerHTML = sorted
+      .slice(0, 8)
+      .map(
+        (r, i) => `
+        <button class="mover-row" data-iso3="${r.country.iso3}">
+          <span class="mover-rank mono">${i + 1}</span>
+          <span class="mover-name">${r.country.name}</span>
+          <span class="mover-value mono" style="color:${Fmt.inflationColor(r.value)};">${r.value.toFixed(1)}%</span>
+        </button>`
+      )
+      .join("");
+
+    moversList.querySelectorAll(".mover-row").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const country = TrackerData.findByIso3(metrics, btn.dataset.iso3);
+        focusCountry(country);
+      });
+    });
   }
 
   function valueGetter(metrics) {
@@ -103,11 +178,12 @@
     }
   }
 
-  // Used by the header search box: flies the camera to a country's
-  // lat/lon, when a globe is mounted and the country has coordinates.
+  // Used by the header search box (and the top-movers panel): flies the
+  // camera to a country's lat/lon and stops auto-rotation, when a globe is
+  // mounted and the country has coordinates.
   function focusCountry(country) {
     if (!globeHandle || !country || country.lat === null || country.lon === null) return;
-    globeHandle.instance.pointOfView({ lat: country.lat, lng: country.lon, altitude: 1.6 }, 1000);
+    globeHandle.flyTo(country.lat, country.lon);
   }
 
   global.MapView = { render, destroy, focusCountry };

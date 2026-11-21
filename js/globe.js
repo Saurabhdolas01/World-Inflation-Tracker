@@ -81,6 +81,7 @@
         return `<div class="globe-tooltip"><span class="name">${name}</span><br><span class="val">${valueStr}</span> inflation</div>`;
       })
       .onPolygonClick((feat) => {
+        instance.controls().autoRotate = false;
         const iso3 = isoOf(feat);
         if (iso3 && onCountryClick) onCountryClick(iso3);
       });
@@ -102,6 +103,11 @@
 
     instance.controls().autoRotate = true;
     instance.controls().autoRotateSpeed = 0.5;
+    // Any manual drag/zoom permanently stops auto-rotation (it should not
+    // resume once the person has taken control of the view).
+    instance.controls().addEventListener("start", () => {
+      instance.controls().autoRotate = false;
+    });
 
     function resize() {
       instance.width(container.clientWidth);
@@ -128,6 +134,10 @@
         const data = instance.polygonsData();
         instance.polygonsData([]);
         instance.polygonsData(data);
+      },
+      flyTo(lat, lng, altitude) {
+        instance.controls().autoRotate = false;
+        instance.pointOfView({ lat, lng, altitude: altitude || 1.6 }, 1000);
       },
       destroy() {
         window.removeEventListener("resize", resize);
